@@ -83,7 +83,7 @@ def subsamp_lts(lts, nsp, n_samples, start=0):
             alive_synapse_ids = alive_until_j['pid']
 
             if len(new_synapse_ids) == 0:
-                srv_prb=0.
+                srv_prb=1.0
             else:
                 srv_prb = len(alive_synapse_ids)/len(new_synapse_ids)
 
