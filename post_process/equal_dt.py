@@ -5,19 +5,9 @@ import numpy as np
 from .lts_subsampling import subsamp_lts
 
 
-def subsamp_equal_dt(dpath):
+def subsamp_equal_dt(nsp, lts, dpath):
 
     df = []
-
-    print("Loding lts data...")
-  
-    with open(dpath+'/namespace.p', 'rb') as pfile:
-        nsp=pickle.load(pfile)
-
-    with open(dpath+'/lts.p', 'rb') as pfile:
-        lts=np.array(pickle.load(pfile))
-
-    print("Finished loading.")
 
     for k in [4, 5, 7, 8, 10, 12, 15, 17, 20, 22, 25, 27, 30, 32, 100,
               250, 500, 1000]:
@@ -46,4 +36,16 @@ if __name__ == "__main__":
     data_dirs = sorted(['data/'+pth for pth in next(os.walk("data/"))[1]])
     
     for dpath in data_dirs:
-        subsamp_equal_dt(dpath)
+
+        print("Loding lts data...")
+  
+        with open(dpath+'/namespace.p', 'rb') as pfile:
+            nsp=pickle.load(pfile)
+
+        with open(dpath+'/lts.p', 'rb') as pfile:
+            lts=np.array(pickle.load(pfile))
+
+        print("Finished loading.")
+
+       
+        subsamp_equal_dt(nsp, lts, dpath)
