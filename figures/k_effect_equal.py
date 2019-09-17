@@ -91,10 +91,12 @@ def k_effect_figures(fit=False):
                     ax_ll = 0.9*df['dts'][1]
                     
                 else:
-                    ax.plot(df['dts'], df['synsrv_prb'], # 'o',
+                    print(df['synsrv_prb'])
+                    ax.plot(df['dts'], df['synsrv_prb'], '.', # 'o',
                             # markeredgewidth=1,
                             # markerfacecolor='None',
                             label=label)
+                    ax_ll = 0.9*df['dts'][1]
 
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
