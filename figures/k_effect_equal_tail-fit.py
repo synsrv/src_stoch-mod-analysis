@@ -62,16 +62,19 @@ def k_effect_figures(fit=False):
 
         for df in df_all:
 
-            if df['pl_alpha']==1.75: 
-            # if df['Npool']==npool and df['k'] in [4, 5, 7, 8, 10]:
-            # if df['Npool']==npool and df['k'] in [10, 25, 100, 250, 1000]:
+            # if df['Npool']==npool and df['k'] in [7, 12, 17, 27]:
+            if df['Npool']==npool and df['k'] in [10, 25, 100, 250, 1000]:
 
                 label = "$k = "+str(df['k'])+"$"
 
                 if fit:
+
+                    N = int(0.6*len(df['dts']))
+                    
                     prm, prm_cov = optimize.curve_fit(powerlaw_func_s,
-                                              df['dts'], df['synsrv_prb'], 
-                                              p0=[0.5, 0.5])
+                                                      df['dts'][N:],
+                                                      df['synsrv_prb'][N:],
+                                                      p0=[0.5, 0.5])
 
                     xs = np.arange(df['dts'][0],
                                    df['dts'][-1],
@@ -81,7 +84,8 @@ def k_effect_figures(fit=False):
                                   powerlaw_func_s(xs,*prm),
                                   linestyle='-', alpha=0.55)
 
-                    label += ', $\gamma = %.4f$' %(prm[0])
+                    label = '$\gamma = %.4f$, s=%.3f \n' %(prm[0], prm[1]) + \
+                             label + ', $N_{\mathrm{cut}} = %d$' %N 
 
                     ax.plot(df['dts'], df['synsrv_prb'], '.', #  'o',
                             # markeredgewidth=1,
@@ -109,7 +113,7 @@ def k_effect_figures(fit=False):
 
         # ---------------------------------------------- 
 
-        directory = 'figures/k_effect_equal_linear/' 
+        directory = 'figures/k_effect_equal_linear_tail-fit/' 
 
         if not os.path.exists(directory):
             os.makedirs(directory)
@@ -121,7 +125,7 @@ def k_effect_figures(fit=False):
                   labelspacing=1.15, borderpad=1.25, bbox_to_anchor=(1, 0.5))
 
 
-        fname = "k_effect_Npool%d" %(npool)
+        fname = "k_effect_Npool%d_linear" %(npool)
 
         fig.savefig(directory+'/'+fname+'.png', dpi=300,
                     bbox_inches='tight')
@@ -129,7 +133,7 @@ def k_effect_figures(fit=False):
 
         # ---------------------------------------------- 
 
-        directory = 'figures/k_effect_equal/' 
+        directory = 'figures/k_effect_equal_tail-fit/' 
 
         if not os.path.exists(directory):
             os.makedirs(directory)
@@ -144,14 +148,14 @@ def k_effect_figures(fit=False):
 
         # ---------------------------------------------- 
 
-        directory = 'figures/k_effect_equal_trimmed/' 
+        directory = 'figures/k_effect_equal_trimmed_tail-fit/' 
 
         if not os.path.exists(directory):
             os.makedirs(directory)
         
         ax.set_xlim(left=ax_ll)
 
-        fname = "k_effect_Npool%d" %(npool)
+        fname = "k_effect_Npool%d_trimmed" %(npool)
 
         fig.savefig(directory+'/'+fname+'.png', dpi=300,
                     bbox_inches='tight')

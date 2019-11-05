@@ -9,9 +9,9 @@ def subsamp_equal_dt(nsp, lts, dpath):
 
     df = []
 
-    for k in [4, 5, 7, 8, 10, 12, 15, 17, 20, 22, 25, 27, 30, 32, 100,
-              250, 500, 1000]:
-    # for k in [4, 8, 16]:
+    # for k in [4, 5, 7, 8, 10, 12, 15, 17, 20, 22, 25, 27, 30, 32, 100,
+    #           250, 500, 1000]:
+    for k in [5, 10, 25, 100]:
 
         dts, synsrv_prb = subsamp_lts(lts, nsp, k, start=0)
 
