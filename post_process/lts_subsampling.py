@@ -32,16 +32,21 @@ def subsamp_lts(lts, nsp, n_samples, start=0):
 
         new_synapse_ids = np.setdiff1d(active_at_2dt, active_at_dt)
         alive_synapse_ids = new_synapse_ids
+        n_alive = len(alive_synapse_ids)
 
-        dts, subsmp_srvprb = [0.], [1.0]
+        dts, subsmp_srvprb, subsmp_lts = [0.], [1.0], []
 
         for j in range(3, n_samples+1):
 
-            alive_until_j =df[(df['t_ins'] < j*dt-1) &
-                              (df['t_elim'] >= j*dt-1) &
-                              (df['pid'].isin(alive_synapse_ids))]
+            alive_until_j = df[(df['t_ins'] < j*dt-1) &
+                               (df['t_elim'] >= j*dt-1) &
+                               (df['pid'].isin(alive_synapse_ids))]
+
+            subsmp_lts.extend((n_alive - len(alive_until_j)) * [(j-2)*dt])
+            
 
             alive_synapse_ids = alive_until_j['pid']
+            n_alive = len(alive_synapse_ids)
 
             if len(new_synapse_ids) == 0:
                 srv_prb=1.0
@@ -52,47 +57,48 @@ def subsamp_lts(lts, nsp, n_samples, start=0):
             dts.append(j*dt-1)
             subsmp_srvprb.append(srv_prb)
 
-        return dts, subsmp_srvprb
+        return dts, subsmp_srvprb, subsmp_lts
     
 
     else:
 
-        dt_init = int(nsp['Nsteps']/start)
-        dt = int((nsp['Nsteps']-(2*dt_init))/(n_samples))
+        raise NotYetImplementedError
+        # dt_init = int(nsp['Nsteps']/start)
+        # dt = int((nsp['Nsteps']-(2*dt_init))/(n_samples))
 
-        active_at_1dt_init = df[(df['t_ins']< dt_init) &
-                                (df['t_elim'] >= dt_init)]['pid']
+        # active_at_1dt_init = df[(df['t_ins']< dt_init) &
+        #                         (df['t_elim'] >= dt_init)]['pid']
         
-        active_at_2dt_init = df[(df['t_ins']< 2*dt_init) &
-                                (df['t_elim'] >= 2*dt_init)]['pid']
+        # active_at_2dt_init = df[(df['t_ins']< 2*dt_init) &
+        #                         (df['t_elim'] >= 2*dt_init)]['pid']
 
-        new_synapse_ids = np.setdiff1d(active_at_2dt_init,
-                                       active_at_1dt_init)
-        alive_synapse_ids = new_synapse_ids
+        # new_synapse_ids = np.setdiff1d(active_at_2dt_init,
+        #                                active_at_1dt_init)
+        # alive_synapse_ids = new_synapse_ids
 
-        dts, subsmp_srvprb = [0.], [1.0]
+        # dts, subsmp_srvprb = [0.], [1.0]
 
-        for j in range(1, n_samples+1):
+        # for j in range(1, n_samples+1):
 
-            # missing the previous ones!
+        #     # missing the previous ones!
 
-            alive_until_j =df[(df['t_ins'] < (2*dt_init)+j*dt-1)
-                              & (df['t_elim'] >= (2*dt_init)+j*dt-1)
-                              & (df['pid'].isin(alive_synapse_ids))]
+        #     alive_until_j =df[(df['t_ins'] < (2*dt_init)+j*dt-1)
+        #                       & (df['t_elim'] >= (2*dt_init)+j*dt-1)
+        #                       & (df['pid'].isin(alive_synapse_ids))]
 
-            alive_synapse_ids = alive_until_j['pid']
+        #     alive_synapse_ids = alive_until_j['pid']
 
-            if len(new_synapse_ids) == 0:
-                srv_prb=1.0
-            else:
-                srv_prb = len(alive_synapse_ids)/len(new_synapse_ids)
-
-
-            subsmp_srvprb.append(srv_prb)
-            dts.append(j*dt-1)
+        #     if len(new_synapse_ids) == 0:
+        #         srv_prb=1.0
+        #     else:
+        #         srv_prb = len(alive_synapse_ids)/len(new_synapse_ids)
 
 
-        return dts, subsmp_srvprb
+        #     subsmp_srvprb.append(srv_prb)
+        #     dts.append(j*dt-1)
+
+
+        # return dts, subsmp_srvprb
     
 
     

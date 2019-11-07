@@ -11,12 +11,13 @@ def subsamp_equal_dt(nsp, lts, dpath):
 
     # for k in [4, 5, 7, 8, 10, 12, 15, 17, 20, 22, 25, 27, 30, 32, 100,
     #           250, 500, 1000]:
-    for k in [5, 10, 25, 100]:
+    for k in [5, 10, 25, 100, 2500]:
 
-        dts, synsrv_prb = subsamp_lts(lts, nsp, k, start=0)
+        dts, synsrv_prb, lts_subsmp = subsamp_lts(lts, nsp, k, start=0)
 
         df_entry = {'k' : k, 'dts' : dts,
                     'synsrv_prb' : synsrv_prb,
+                    'lts' : lts_subsmp,
                     'start' : 0,
                     'dpath': dpath}
 
