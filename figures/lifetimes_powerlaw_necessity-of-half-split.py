@@ -38,58 +38,39 @@ def powerlaw_figures(dpath, fit=False):
     lts_df = lts_df[lts_df[:,1]>0]
 
     # discard synapses still alive at end of simulation
-    lts_df = lts_df[lts_df[:,4]==1]
+    # lts_df = lts_df[lts_df[:,4]==1]
+    t_split = nsp['Nsteps']/2
+    lts_df = lts_df[lts_df[:,3]<t_split]
+
+    lts = lts_df[:,2] - lts_df[:,3]
+    lts[lts > t_split] = t_split
+    
+    fit = powerlaw.Fit(lts, xmin=1, xmax=t_split+1)
+    label = '$\gamma = %.4f$, $x_{\mathrm{min}}=%.1f$' %(fit.power_law.alpha,
+                                                         fit.power_law.xmin)
+
+    figPDF = powerlaw.plot_pdf(
+               lts[lts>fit.power_law.xmin],
+               label=label,alpha=1.)
+
+    fit.power_law.plot_pdf(ax=figPDF, linestyle='--')
 
     lts = lts_df[:,2] - lts_df[:,3]
 
+    fit2 = powerlaw.Fit(lts, xmin=1)
+    label = '$\gamma = %.4f$, $x_{\mathrm{min}}=%.1f$' %(fit2.power_law.alpha,
+                                                         fit2.power_law.xmin)
 
-    if fit:
+    powerlaw.plot_pdf(
+               lts[lts>fit2.power_law.xmin],
+               label=label,alpha=1.)
 
-        fit = powerlaw.Fit(lts, xmin=10)
-        label = '$\gamma = %.4f$, $x_{\mathrm{min}}=%.1f$' %(fit.power_law.alpha, fit.power_law.xmin)
+    fit2.power_law.plot_pdf(ax=figPDF, linestyle='--')
 
-        figPDF = powerlaw.plot_pdf(
-                   lts[lts>fit.power_law.xmin],
-                   label=label,alpha=1.)
-
-        
-        
-        # def pwl(x, alph, xmin):
-        #     return (alph - 1) * xmin**(alph-1)*x**(-1*alph)
-
-        # figPDF.plot(np.arange(100, 30000, 1),
-        #             pwl(np.arange(100, 30000, 1),
-        #                 fit.alpha, fit.xmin))
-
-        fit.power_law.plot_pdf(ax=figPDF, linestyle='--')
-
-
-
-        # powerlaw.plot_pdf(lts, linear_bins=True,
-        #                   ax=figPDF, label=label)
-
-
-
-
-        # manual method
-        # bins = np.logspace(np.log10(fit.power_law.xmin),
-        #                    np.log10(np.max(lts)),
-        #                    15)
-        # cts, edgs = np.histogram(
-        #                lts[lts>=fit.power_law.xmin],
-        #                density=True, bins=bins)
-
-        # centers = (edgs[:-1] + edgs[1:]) / 2
-
-        # figPDF.plot(centers, cts)
-
-
-    else:
-        pass
 
     pl.legend()
 
-    directory = 'figures/lts_traces/'
+    directory = 'figures/lts_traces_half-split-necessary/'
 
     if not os.path.exists(directory):
         os.makedirs(directory)

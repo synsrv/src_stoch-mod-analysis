@@ -38,11 +38,11 @@ def powerlaw_figures(fit=False, manual=False):
             with open(dpath+'/namespace.p', 'rb') as pfile:
                 nsp=pickle.load(pfile)
 
-            with open(dpath+'/synsrv_prb_equal.p', 'rb') as pfile:
-                synsrv_prbs=np.array(pickle.load(pfile))
+            with open(dpath+'/true_lts_equal.p', 'rb') as pfile:
+                true_lts_df=np.array(pickle.load(pfile))
 
-            for synsrv in synsrv_prbs:
-                concat = {**nsp, **synsrv}
+            for true_lts in true_lts_df:
+                concat = {**nsp, **true_lts}
                 df_all.append(concat)
 
         except FileNotFoundError:
@@ -55,14 +55,14 @@ def powerlaw_figures(fit=False, manual=False):
     all_Npool = np.unique([df['Npool'] for df in df_all])
     all_k = np.unique([df['k'] for df in df_all])
 
-    for k in all_k[all_k > 10]:
+    for k in all_k[all_k >= 10]:
         
         # fig, ax = pl.subplots()
         # fig.set_size_inches(5.2,3)
 
         for df in df_all:
 
-            # if df['pl_alpha']==1.5 and df['k']==k: 
+            if df['pl_alpha']==1.5 and df['k']==k: 
             # if df['Npool']==npool and df['k'] in [4, 5, 7, 8, 10]:
             # if df['Npool']==npool and df['k'] in [100, 1000]:
             # if df['Npool']==npool and df['k'] in [1000]:
@@ -70,13 +70,13 @@ def powerlaw_figures(fit=False, manual=False):
 
                 label = "$k = "+str(df['k'])+"$"
 
-                print(df)
                 dt = df['dts'][1]-df['dts'][0]
 
                 # print(dt)
                 # print(df['synsrv_prb'])
 
-                lts_dat = np.array(df['lts'])
+                lts_dat = np.array(df['df_newins'][:,2] - df['df_newins'][:,3])
+                # lts_dat[lts_dat > (df['Nsteps']-dt)] = df['Nsteps']-dt
                 # print(lts_dat)
 
                 # lts_dat=np.trim_zeros(lts_dat)
@@ -161,13 +161,13 @@ def powerlaw_figures(fit=False, manual=False):
                     # ax_ll = 0.9*df['dts'][1]
 
 
-        directory = 'figures/lifetimes_powerlaw/'
+        directory = 'figures/true_lts/'
 
         if not os.path.exists(directory):
             os.makedirs(directory)
                     
         pl.legend()
-        pl.savefig('figures/lifetimes_powerlaw/k%d.png' %k,
+        pl.savefig(directory+'k%d.png' %k,
                             bbox_inches='tight')
 
         pl.clf()

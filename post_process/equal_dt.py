@@ -12,15 +12,31 @@ def subsamp_equal_dt(nsp, lts, dpath):
     
     for k in [5, 6, 7, 8, 10, 25, 50, 100, 250, 2500]:
         
-        dts, synsrv_prb, lts_subsmp = subsamp_lts(lts, nsp, k, start=0)
+        dts, synsrv_prb, lts_subsmp, _ = subsamp_lts(lts, nsp, k, start=0)
 
         log_dts, log_synsrv_prb, log_lts_subsmp = log_subsamp_lts(lts,
                                                                   nsp, k,
                                                                   start=0)
 
-        df_entry = {'k' : k, 'dts' : dts,
+        df_starts = []
+        
+        for start in [100, 250, 1000, 2500]:
+            dts_fx, synsrv_prb_fx, lts_subsmp_fx, tlts =  subsamp_lts(lts, nsp, k, start=start)
+
+            df_start = {'start': start,
+                        'dts_fx' : dts_fx,
+                        'synsrv_prb_fx' : synsrv_prb_fx,
+                        'lts_fx' : lts_subsmp_fx,
+                        'tlts_fx': np.array(tlts)}
+            df_starts.append(df_start)
+            
+
+
+        df_entry = {'k' : k,
+                    'dts' : dts,
                     'synsrv_prb' : synsrv_prb,
                     'lts' : lts_subsmp,
+                    'fx'  : df_starts,
                     'log_dts': log_dts,
                     'log_synsrv_prb': log_synsrv_prb,
                     'log_lts_subsmp': log_lts_subsmp,
